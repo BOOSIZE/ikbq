@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>标题</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+<div id="dd">
+
+
+
+
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" id="account"  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-inline">
+            <input type="password" name="password" id="pass"  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="log">登录</button>
+        </div>
+    </div>
+
+</form>
+
+</div>
+
+<script>
+
+	layui.use('form', function(){
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(log)', function(data){
+
+			var account=$('#account').val();
+			var pass=$('#pass').val();
+			$.ajax({
+				type:'POST',
+				url:'/user/log',//后端路径
+				data:{account:account,pass:pass},//传给后端的参数
+				success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+				{
+                    if(msg==="nobody")
+                    {
+                    	layer.alert("用户不存在",{icon:5});
+                    }
+                    else if (msg==="no")
+                    {
+	                    layer.alert("密码有误",{icon:5});
+                    }
+                    else
+                    {
+	                    layer.open({
+		                    title: '温馨提示',
+		                    content: '登录成功',
+		                    closeBtn: 0,
+		                    anim: 4,
+		                    type: 0,
+                            icon:6,
+                            yes:function () {
+                                window.location.href="/go/to/main";
+                            }
+	                    });
+                    }
+				},
+				error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+				{
+					alert("服务器正忙.....");
+				}
+			});
+
+
+
+			return false;
+		});
+	});
+</script>
+
+
+
+
+
+</body>
+</html>
