@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>标题</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="update">修改姓名</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+
+
+
+<form class="layui-form" action="">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" id="name"   placeholder="请输入姓名" autocomplete="off" class="layui-input">
+        </div>
+
+
+        <label class="layui-form-label">性别：</label>
+        <div class="layui-input-inline">
+                <select id="sex">
+                    <option value="全部">全部</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+        </div>
+
+
+        <label class="layui-form-label">学历：</label>
+        <div class="layui-input-inline">
+            <select id="stu">
+                <option value="全部">全部</option>
+                <option value="博士">博士</option>
+                <option value="硕士">硕士</option>
+                <option value="本科">本科</option>
+                <option value="高中以下">高中以下</option>
+            </select>
+        </div>
+
+
+        <button class="layui-btn layui-btn-radius layui-btn-norma" lay-submit lay-filter="select">查询</button>
+
+    </div>
+
+
+</form>
+
+
+<table id="userTable" lay-filter="userTable"></table>
+
+
+<script>
+	layui.use(['form','table'], function() {
+		var form = layui.form;
+		var table = layui.table;
+
+		table.render({
+
+			elem: '#userTable'
+			,url: "/user/getList"//后端路径
+			,page: true//开启分页
+			,limit:5//每页条数
+			,limits:[5,10]//可选择每页条数
+			,id:"userTable"//设置table的id（表格重载时调用）
+			,cols: [
+			[
+				{field:'name', title: '姓名', width:'20%'},
+				{field:'sex', title: '性别', width:'20%'},
+				{field:'stu', title: '学历', width:'20%'},
+				{field:'date', title: '生日', width:'20%'},
+				{toolbar:'#tool', title: '操作', width:'20%'}
+			]
+		]
+
+        });
+
+		form.on('submit(select)', function(data)
+		{
+			table.reload('userTable',
+				{
+					page:
+						{
+							curr: 1//从第一页开始
+						}
+					, where:
+						{
+							name: $('#name').val()//写条件
+							, sex: $('#sex').val()
+							, stu: $('#stu').val()
+						}
+				});
+
+			return false;
+        });
+
+		table.on('tool(userTable)', function(obj) {
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event;//被点击的按钮
+
+			if (layEvent === "delete")
+			{
+				layer.confirm('确定要删除'+data.name+'吗', {title:'温馨提示',icon:7}, function(index)
+				{
+					$.ajax({
+						type:'POST',
+						url:'/user/deleteUser',//后端路径
+						data:{account:data.account},//传给后端的参数
+						success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+						{
+							if(msg==="no")
+							{
+								layer.alert("删除失败，请重试",{icon:5});
+							}
+							else
+							{
+								layer.alert("恭喜你，删除成功",{icon:6});
+								$(".layui-laypage-btn")[0].click();
+								layer.close(index);
+							}
+						},
+						error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+						{
+							layer.alert("服务器正忙.....",{icon:5});
+						}
+					});
+				});
+			}
+			else
+            {
+	            layer.prompt({title:'请输入新的姓名'},function(value, index, elem)
+                {
+                	if(value.trim().length<2 || value.trim().length>6)
+                    {
+                    	layer.alert("请输入2-6位的姓名",{icon:5});
+                    }
+                	else
+                    {
+	                    $.ajax({
+		                    type:'POST',
+		                    url:'/user/updateName',//后端路径
+		                    data:{account:data.account,name:value.trim()},//传给后端的参数
+		                    success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+		                    {
+			                    if(msg==="no")
+			                    {
+				                    layer.alert("修改失败，请重试",{icon:5});
+			                    }
+			                    else
+			                    {
+				                    layer.alert("恭喜你，修改成功",{icon:6});
+				                    table.reload('userTable');
+				                    layer.close(index);
+			                    }
+		                    },
+		                    error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+		                    {
+			                    layer.alert("服务器正忙.....",{icon:5});
+		                    }
+	                    });
+                    }
+                });
+            }
+		});
+
+
+	});
+
+</script>
+
+
+
+</body>
+</html>
