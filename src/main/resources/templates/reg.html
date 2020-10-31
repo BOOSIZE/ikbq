@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/reg.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<div id="dd">
+<form class="layui-form" action="" id="myForm">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="account" onblur="checkAccount(this)"    lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux"><span id="sp1" class="sp"></span></div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-inline">
+            <input type="password" id="pass" onblur="checkPass(this)" name="password"  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux"><span id="sp2" class="sp"></span></div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">再次输入：</label>
+        <div class="layui-input-inline">
+            <input type="password" name="password2" id="pass2" onblur="checkPass2(this)"  lay-verify="required" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux"><span id="sp3" class="sp"></span></span></div>
+    </div>
+
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" onblur="checkName(this)"   lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux"><span id="sp4" class="sp"></span></div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">学历：</label>
+        <div class="layui-input-inline">
+            <select name="stu" lay-verify="required">
+                <option value=""></option>
+                <option value="博士">博士</option>
+                <option value="硕士">硕士</option>
+                <option value="本科">本科</option>
+                <option value="高中以下">高中以下</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">生日：</label>
+        <div class="layui-input-inline">
+            <input type="text" id="date" name="date"   lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别：</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="sex" value="男" title="男" checked>
+            <input type="radio" name="sex" value="女" title="女">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="reg">注册</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <span>已有账号？点击<a th:href="@{/go/to/index}">登录</a></span>
+        </div>
+    </div>
+
+
+</form>
+</div>
+
+
+<script>
+
+
+    function checkAccount(node)
+    {
+        var account=node.value.trim();
+        if(!(account>=13000000000 && account<19000000000 && account.length===11))
+        {
+	        document.getElementById("sp1").innerText="请输入正确的手机号";
+        }
+        else
+        {
+
+	        $.ajax({
+		        type:'POST',
+		        url:'/user/checkAccount',//后端路径
+		        data:{account:account},//传给后端的参数
+		        success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+		        {
+                    if(msg==="no")
+                    {
+	                    document.getElementById("sp1").innerText="该手机号已被注册";
+                    }
+                    else
+                    {
+	                    document.getElementById("sp1").innerText="";
+                    }
+		        },
+		        error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+		        {
+			        layer.alert("服务器正忙.....",{icon:5});
+		        }
+	        });
+
+
+
+
+        }
+    }
+
+
+	function checkPass(node)
+	{
+		var pass=node.value;
+		var pass2=$('#pass2').val();
+		if(pass.length<6 || pass.length>8)
+		{
+			document.getElementById("sp2").innerText="请输入6-8位的密码";
+		}
+		else
+		{
+			document.getElementById("sp2").innerText="";
+		}
+
+		if(pass===pass2)
+        {
+        	document.getElementById("sp3").innerText="";
+        }
+		else
+        {
+	        document.getElementById("sp3").innerText="两次密码不一致";
+        }
+	}
+
+	function checkPass2(node)
+    {
+        var pass2=node.value;
+        var pass=$('#pass').val();
+        if(pass===pass2)
+        {
+	        document.getElementById("sp3").innerText="";
+        }
+        else
+        {
+	        document.getElementById("sp3").innerText="两次密码不一致";
+        }
+
+	}
+
+
+	function checkName(node)
+	{
+		var name=node.value.trim();
+		if(name.length<2 || name.length>6)
+		{
+			document.getElementById("sp4").innerText="请输入2-6位的姓名";
+		}
+		else
+		{
+			document.getElementById("sp4").innerText="";
+		}
+	}
+
+
+</script>
+
+<script>
+
+
+
+	layui.use(['form','laydate'], function(){
+		var form = layui.form;
+		var laydate = layui.laydate;
+
+		laydate.render( {
+			elem:'#date',
+            showBottom:false
+		});
+
+		//监听提交
+		form.on('submit(reg)', function(data)
+        {
+            var sp1=document.getElementById("sp1").innerText;
+            var sp2=document.getElementById("sp2").innerText;
+            var sp3=document.getElementById("sp3").innerText;
+            var sp4=document.getElementById("sp4").innerText;
+
+
+            if(sp1.length+sp2.length+sp3.length+sp4.length>0)
+            {
+            	layer.alert("请将信息填写正确",{icon:5});
+            }
+            else
+            {
+	            $.ajax({
+		            type:'POST',
+		            url:'/user/addUser',//后端路径
+		            data:$('#myForm').serialize(),//传给后端的参数
+		            success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+		            {
+			            if(msg==="no")
+			            {
+				            layer.alert("注册失败，请重试",{icon:5});
+			            }
+			            else
+			            {
+				            layer.open({
+					            title: '温馨提示',
+					            content: '注册成功',
+					            closeBtn: 0,
+					            anim: 4,
+					            type: 0,
+					            icon:6,
+					            yes:function () {
+						            window.location.href="/go/to/index";
+					            }
+				            });
+			            }
+		            },
+		            error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+		            {
+			            layer.alert("服务器正忙.....",{icon:5});
+		            }
+	            });
+            }
+
+			return false;
+		});
+
+
+
+
+	});
+</script>
+
+
+
+
+</body>
+</html>

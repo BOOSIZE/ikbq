@@ -10,3 +10,12 @@ body
     background-image: url("../images/beijing.jpg");
     background-size: 100%;
 }
+a
+{
+    color: whitesmoke;
+}
+
+a:hover
+{
+    color: #00FF00;
+}

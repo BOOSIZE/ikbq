@@ -29,4 +29,33 @@ public class UserServiceImpl implements UserService
 		}
 		return str;
 	}
+
+	@Override
+	public String checkAccount(String account)
+	{
+		String str="no";
+
+		Userinfo userinfo=userDao.getUser(account);
+
+		if(userinfo==null)
+		{
+			str="yes";
+		}
+
+		return str;
+	}
+
+	@Override
+	public String addUser(Userinfo userinfo)
+	{
+		String str="no";
+
+		int n=userDao.addUser(userinfo);
+		if(n>0)
+		{
+			str="yes";
+		}
+
+		return str;
+	}
 }

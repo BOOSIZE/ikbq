@@ -1,0 +1,32 @@
+.sp
+{
+    color: RED;
+}
+
+body
+{
+    background-image: url("../images/beijing.jpg");
+    background-size: 100%;
+}
+
+#dd
+{
+    margin-left: 550px;
+    margin-top: 140px;
+    color: whitesmoke;
+}
+
+a
+{
+    color: whitesmoke;
+}
+
+a:hover
+{
+    color: #00FF00;
+}
+
+.layui-form-select
+{
+    color: #0C0C0C !important;
+}
