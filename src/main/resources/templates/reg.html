@@ -17,7 +17,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">账号：</label>
         <div class="layui-input-inline">
-            <input type="text" name="account" onblur="checkAccount(this)"    lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+            <input type="text" name="account" onblur="checkAccount(this)"    lay-verify="required" placeholder="请输入11位的手机号" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-form-mid layui-word-aux"><span id="sp1" class="sp"></span></div>
     </div>
@@ -27,7 +27,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">密码：</label>
         <div class="layui-input-inline">
-            <input type="password" id="pass" onblur="checkPass(this)" name="password"  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            <input type="password" id="pass" onblur="checkPass(this)" name="password"  lay-verify="required" placeholder="请输入6-8位的密码" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-form-mid layui-word-aux"><span id="sp2" class="sp"></span></div>
     </div>
@@ -48,7 +48,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">姓名：</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" onblur="checkName(this)"   lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+            <input type="text" name="name" onblur="checkName(this)"   lay-verify="required" placeholder="请输入2-6位的姓名" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-form-mid layui-word-aux"><span id="sp4" class="sp"></span></div>
     </div>
@@ -80,8 +80,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">性别：</label>
         <div class="layui-input-inline">
-            <input type="radio" name="sex" value="男" title="男" checked>
-            <input type="radio" name="sex" value="女" title="女">
+            <input type="radio" name="sex" value="1" title="男" checked>
+            <input type="radio" name="sex" value="0" title="女">
         </div>
     </div>
 

@@ -2,27 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.ikbq.dao.UserDao">
 
-
-
     <select id="getList" parameterType="java.util.HashMap" resultType="com.example.ikbq.entity.Userinfo">
-
-        SELECT * FROM USERINFO WHERE 1=1
-         <if test="name!=null">
-             AND NAME LIKE CONCAT('%',#{name},'%')
-         </if>
-
-         <if test="sex!=null">
-             AND SEX=#{sex}
-
-         </if>
-
-        <if test="stu!=null">
-            AND STU=#{stu}
+        SELECT * FROM USERINFO WHERE ROLE='1'
+        <if test="name!=null">
+            AND NAME LIKE CONCAT('%',#{name},'%')
 
         </if>
-         LIMIT #{limit} OFFSET #{start}
 
+        <if test="sex!=null">
+            AND SEX =#{sex}
+        </if>
+
+        <if test="stu!=null">
+            AND STU =#{stu}
+        </if>
+
+        LIMIT #{limit} OFFSET #{start}
     </select>
-
-
 </mapper>

@@ -9,6 +9,40 @@ public class Userinfo {
   private String name;
   private String sex;
   private String stu;
+  private Long did;
+  private String dname;
+
+  public String getDname()
+  {
+    return dname;
+  }
+
+  public void setDname(String dname)
+  {
+    this.dname = dname;
+  }
+
+  public Long getDid()
+  {
+    return did;
+  }
+
+  public void setDid(Long did)
+  {
+    this.did = did;
+  }
+
+  public String getRole()
+  {
+    return role;
+  }
+
+  public void setRole(String role)
+  {
+    this.role = role;
+  }
+
+  private String role;
 
   public String getDate()
   {

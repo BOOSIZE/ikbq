@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>员工列表</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<script id="msg" type="text/html">
+    <form class="layui-form" action="">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号：</label>
+            <div class="layui-input-inline">
+                <input type="text"  id="account"  lay-verify="required"   placeholder="请输入5-8位的账号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码：</label>
+            <div class="layui-input-inline">
+                <input type="password"   id="pass"  lay-verify="required" placeholder="请输入5-8位的密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名：</label>
+            <div class="layui-input-inline">
+                <input type="text"  id="name2"   lay-verify="required" placeholder="请输入2-6位的姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="sex" value="1" title="男" checked>
+                <input type="radio" name="sex" value="0" title="女" id="woman">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">职位：</label>
+            <div class="layui-input-inline">
+                <select  lay-verify="required" id="role">
+                    <option value=""></option>
+                    <option value="2">经理</option>
+                    <option value="3">员工</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属部门：</label>
+            <div class="layui-input-inline">
+                <select id="dept"  lay-verify="required">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="yes">新增</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+</script>
+
+
+<script type="text/html" id="bar">
+    {{#  if(d.role==='3'){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="update">修改姓名</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+    {{#  } }}
+</script>
+
+
+<!--单独if-->
+<!--{{# if(){ }}-->
+<!--{{#  } }}-->
+
+<!--if else-->
+<!--{{# if(){ }}-->
+<!--{{# } else{ }}-->
+<!--{{#  } }}-->
+
+<!--if else if else-->
+<!--{{# if(){ }}-->
+<!--{{# } else if(){ }}-->
+<!--{{# } else{ }}-->
+<!--{{# } }}-->
+
+<form class="layui-form" action="">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名：</label>
+        <div class="layui-input-inline">
+            <input type="text" id="name"   placeholder="请输入姓名" autocomplete="off" class="layui-input">
+        </div>
+
+
+        <label class="layui-form-label">性别：</label>
+        <div class="layui-input-inline">
+            <select id="sex">
+                <option value="全部">全部</option>
+                <option value="1">男</option>
+                <option value="0">女</option>
+            </select>
+        </div>
+
+        <label class="layui-form-label">所属部门：</label>
+        <div class="layui-input-inline">
+            <select id="did">
+                <option value="全部">全部</option>
+            </select>
+        </div>
+
+
+
+        <button class="layui-btn layui-btn-radius layui-btn-norma" lay-submit lay-filter="select">查询</button>
+        <button type="reset" class="layui-btn layui-btn-radius layui-btn-normal">重置</button>
+        <button class="layui-btn layui-btn-radius layui-btn-danger" lay-submit lay-filter="add">新增</button>
+
+    </div>
+
+
+</form>
+
+
+<table id="adminTable" lay-filter="adminTable"></table>
+
+
+<script>
+	layui.use(['form','table'], function() {
+		var form = layui.form;
+		var table = layui.table;
+
+
+		$(function ()
+        {
+	        $.ajax({
+		        type:'POST',
+		        url:'/user/getDept',//后端路径
+		        success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+		        {
+			        for(var i=0;i<msg.length;i++)
+			        {
+				        $('#did').append("<option value='"+msg[i].did+"'> "+msg[i].name+"</option>")
+			        }
+			        form.render();
+		        },
+		        error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+		        {
+			        layer.alert("服务器正忙.....",{icon:5});
+		        }
+	        });
+		});
+
+
+		table.render({
+
+			elem: '#adminTable'
+			,url: "/user/getAdminList"//后端路径
+			,page: true//开启分页
+			,limit:5//每页条数
+			,limits:[5,10]//可选择每页条数
+			,id:"adminTable"//设置table的id（表格重载时调用）
+			,cols: [
+				[
+					{field:'name', title: '姓名', width:'20%'},
+					{field:'sex', title: '性别', width:'20%',templet:function (d) {if(d.sex==='1'){return '男'} else{return '女'}}},
+					{field:'role', title: '职位', width:'20%',templet:function (d) {if(d.role==='2'){return '经理'} else{return '员工'}}},
+                    {field:'dname',title:'所属部门',width:'20%'},
+                    {toolbar:'#bar',title:'操作',width:'20%'}
+				]
+			]
+
+		});
+
+		form.on('submit(select)', function(data)
+		{
+			table.reload('adminTable',
+				{
+					page:
+						{
+							curr: 1//从第一页开始
+						}
+					, where:
+						{
+							name: $('#name').val()//写条件
+							, sex: $('#sex').val()
+							, did: $('#did').val()
+						}
+				});
+
+			return false;
+		});
+
+		table.on('tool(adminTable)', function(obj) {
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event;//被点击的按钮
+
+			if (layEvent === "delete")
+			{
+				layer.confirm('确定要删除'+data.name+'吗', {title:'温馨提示',icon:7}, function()
+				{
+					$.ajax({
+						type:'POST',
+						url:'/user/deleteUser',//后端路径
+						data:{account:data.account},//传给后端的参数
+						success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+						{
+							if(msg==="no")
+							{
+								layer.alert("删除失败，请重试",{icon:5});
+							}
+							else
+							{
+								layer.alert("恭喜你，删除成功",{icon:6});
+								$(".layui-laypage-btn")[0].click();
+							}
+						},
+						error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+						{
+							layer.alert("服务器正忙.....",{icon:5});
+						}
+					});
+				});
+			}
+			else
+			{
+				layer.prompt({title:'请输入新的姓名'},function(value, index)
+				{
+					if(value.trim().length<2 || value.trim().length>6)
+					{
+						layer.alert("请输入2-6位的姓名",{icon:5});
+					}
+					else
+					{
+						layer.confirm('确定要将'+data.name+'的姓名修改为'+value.trim()+'吗',{title:'温馨提示',icon:7},function () {
+							$.ajax({
+								type:'POST',
+								url:'/user/updateName',//后端路径
+								data:{account:data.account,name:value.trim()},//传给后端的参数
+								success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+								{
+									if(msg==="no")
+									{
+										layer.alert("修改失败，请重试",{icon:5});
+									}
+									else
+									{
+										layer.alert("恭喜你，修改成功",{icon:6});
+										$(".layui-laypage-btn")[0].click();
+										layer.close(index);
+									}
+								},
+								error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+								{
+									layer.alert("服务器正忙.....",{icon:5});
+								}
+							});
+						})
+					}
+				});
+			}
+		});
+
+		form.on('submit(add)', function(data)
+		{
+			var dialog=layer.open({
+				title: '温馨提示',
+				content: $('#msg').html(),
+				closeBtn: 2,
+				anim: 4,
+				type: 1,
+				area:['400px','450px'],
+				success:function () {
+					$.ajax({
+						type:'POST',
+						url:'/user/getDept',//后端路径
+						success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+						{
+							for(var i=0;i<msg.length;i++)
+                            {
+                            	$('#dept').append("<option value='"+msg[i].did+"'> "+msg[i].name+"</option>")
+                            }
+							form.render();
+						},
+						error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+						{
+							layer.alert("服务器正忙.....",{icon:5});
+						}
+					});
+				}
+			});
+			form.on('submit(yes)', function(data)
+			{
+				var account=$('#account').val().trim();
+				var pass=$('#pass').val();
+				var name=$('#name2').val().trim();
+				var role=$('#role').val();
+				var did=$('#dept').val();
+				var sex='1';
+				if(document.getElementById("woman").checked===true)
+				{
+					sex='0';
+				}
+
+				if(account.length<5 || account.length>8)
+				{
+					layer.alert("请输入5-8位的账号",{icon:5});
+				}
+				else if(pass.length<5 || pass.length>8)
+				{
+					layer.alert("请输入5-8位的密码",{icon:5});
+				}
+				else if(name.length<2 || name.length>6)
+				{
+					layer.alert("请输入2-6位的姓名",{icon:5});
+				}
+				else
+				{
+					$.ajax({
+						type:'POST',
+						url:'/user/checkAccount',//后端路径
+						data:{account:account},//传给后端的参数
+						success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+						{
+							if(msg==="no")
+							{
+								layer.alert("该账号已被注册",{icon:5});
+							}
+							else
+							{
+								$.ajax({
+									type:'POST',
+									url:'/user/addAdmin',//后端路径
+									data:{account:account,password:pass,name:name,sex:sex,role:role,did:did},//传给后端的参数
+									success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
+									{
+										if(msg==="no")
+										{
+											layer.alert("新增失败，请重试",{icon:5});
+										}
+										else
+										{
+											layer.alert("恭喜你，新增成功",{icon:6});
+											$(".layui-laypage-btn")[0].click();
+											//table.reload('userTable');
+											layer.close(dialog);
+										}
+									},
+									error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+									{
+										layer.alert("服务器正忙.....",{icon:5});
+									}
+								});
+							}
+						},
+						error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
+						{
+							layer.alert("服务器正忙.....",{icon:5});
+						}
+					});
+				}
+
+				return false;
+			});
+
+			return false;
+		});
+
+
+	});
+
+</script>
+
+
+
+</body>
+</html>

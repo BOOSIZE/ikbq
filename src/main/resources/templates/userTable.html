@@ -2,12 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>标题</title>
+    <title>用户列表</title>
     <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
     <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
     <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body>
+
+
 
 
 <script type="text/html" id="tool">
@@ -24,7 +26,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">姓名：</label>
         <div class="layui-input-inline">
-            <input type="text" name="title" id="name"   placeholder="请输入姓名" autocomplete="off" class="layui-input">
+            <input type="text"  id="name"   placeholder="请输入姓名" autocomplete="off" class="layui-input">
         </div>
 
 
@@ -32,8 +34,8 @@
         <div class="layui-input-inline">
                 <select id="sex">
                     <option value="全部">全部</option>
-                    <option value="男">男</option>
-                    <option value="女">女</option>
+                    <option value="1">男</option>
+                    <option value="0">女</option>
                 </select>
         </div>
 
@@ -51,6 +53,7 @@
 
 
         <button class="layui-btn layui-btn-radius layui-btn-norma" lay-submit lay-filter="select">查询</button>
+        <button type="reset" class="layui-btn layui-btn-radius layui-btn-normal">重置</button>
 
     </div>
 
@@ -77,7 +80,7 @@
 			,cols: [
 			[
 				{field:'name', title: '姓名', width:'20%'},
-				{field:'sex', title: '性别', width:'20%'},
+				{field:'sex', title: '性别', width:'20%',templet:function (d) {if(d.sex==='1'){return '男'} else{return '女'}}},
 				{field:'stu', title: '学历', width:'20%'},
 				{field:'date', title: '生日', width:'20%'},
 				{toolbar:'#tool', title: '操作', width:'20%'}
@@ -111,7 +114,7 @@
 
 			if (layEvent === "delete")
 			{
-				layer.confirm('确定要删除'+data.name+'吗', {title:'温馨提示',icon:7}, function(index)
+				layer.confirm('确定要删除'+data.name+'吗', {title:'温馨提示',icon:7}, function()
 				{
 					$.ajax({
 						type:'POST',
@@ -127,7 +130,6 @@
 							{
 								layer.alert("恭喜你，删除成功",{icon:6});
 								$(".layui-laypage-btn")[0].click();
-								layer.close(index);
 							}
 						},
 						error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
@@ -139,7 +141,7 @@
 			}
 			else
             {
-	            layer.prompt({title:'请输入新的姓名'},function(value, index, elem)
+	            layer.prompt({title:'请输入新的姓名'},function(value, index)
                 {
                 	if(value.trim().length<2 || value.trim().length>6)
                     {
@@ -147,28 +149,31 @@
                     }
                 	else
                     {
-	                    $.ajax({
-		                    type:'POST',
-		                    url:'/user/updateName',//后端路径
-		                    data:{account:data.account,name:value.trim()},//传给后端的参数
-		                    success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
-		                    {
-			                    if(msg==="no")
+	                    layer.confirm('确定要将'+data.name+'的名字修改为'+value.trim()+'吗', {title:'温馨提示',icon:7}, function()
+	                    {
+		                    $.ajax({
+			                    type:'POST',
+			                    url:'/user/updateName',//后端路径
+			                    data:{account:data.account,name:value.trim()},//传给后端的参数
+			                    success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
 			                    {
-				                    layer.alert("修改失败，请重试",{icon:5});
-			                    }
-			                    else
+				                    if(msg==="no")
+				                    {
+					                    layer.alert("修改失败，请重试",{icon:5});
+				                    }
+				                    else
+				                    {
+					                    layer.alert("恭喜你，修改成功",{icon:6});
+					                    $(".layui-laypage-btn")[0].click();
+					                    layer.close(index);
+				                    }
+			                    },
+			                    error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
 			                    {
-				                    layer.alert("恭喜你，修改成功",{icon:6});
-				                    table.reload('userTable');
-				                    layer.close(index);
+				                    layer.alert("服务器正忙.....",{icon:5});
 			                    }
-		                    },
-		                    error:function ()//异常时执行的内容，后端代码报错，url路径找不到等
-		                    {
-			                    layer.alert("服务器正忙.....",{icon:5});
-		                    }
-	                    });
+		                    });
+                        });
                     }
                 });
             }
