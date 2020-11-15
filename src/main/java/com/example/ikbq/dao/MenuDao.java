@@ -9,9 +9,6 @@ import java.util.List;
 @Mapper
 public interface MenuDao
 {
-	@Select("SELECT * FROM MENUINFO WHERE FNUM=0")
-	List<Menuinfo> getFathers();
-
-	@Select("SELECT * FROM MENUINFO WHERE FNUM=#{num}")
-	List<Menuinfo> getSons(String num);
+	@Select("SELECT F.NAME FNAME,S.* FROM MENUINFO F,MENUINFO S WHERE F.NUM=S.FNUM")
+	List<Menuinfo> getMenus();
 }

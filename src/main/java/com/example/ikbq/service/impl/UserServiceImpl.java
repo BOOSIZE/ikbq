@@ -46,13 +46,24 @@ public class UserServiceImpl implements UserService
 				session.setAttribute("user",userinfo);
 				if(!(userinfo.getRole().equals("1")))
 				{
-					List<Menuinfo> fathers=menuDao.getFathers();
 					HashMap<String, List<Menuinfo>> map=new HashMap<>();
-					for(Menuinfo menu: fathers)
+
+					List<Menuinfo> list=menuDao.getMenus();
+
+					for(Menuinfo menuinfo:list)
 					{
-						List<Menuinfo> list=menuDao.getSons(menu.getNum());
-						map.put(menu.getName(),list);
+						if(map.containsKey(menuinfo.getFname()))
+						{
+							map.get(menuinfo.getFname()).add(menuinfo);
+						}
+						else
+						{
+							List<Menuinfo> l=new ArrayList<>();
+							l.add(menuinfo);
+							map.put(menuinfo.getFname(),l);
+						}
 					}
+
 					session.setAttribute("menu",map);
 					str="admin";
 				}

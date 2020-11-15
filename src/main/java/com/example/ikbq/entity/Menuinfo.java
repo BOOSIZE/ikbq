@@ -7,6 +7,17 @@ public class Menuinfo {
   private String name;
   private String num;
   private String fnum;
+  private String fname;
+
+  public String getFname()
+  {
+    return fname;
+  }
+
+  public void setFname(String fname)
+  {
+    this.fname = fname;
+  }
 
   public String getUrl()
   {
