@@ -4,6 +4,17 @@ public class Deptinfo
 {
 	private Long did;
 	private String name;
+	private String sum;
+
+	public String getSum()
+	{
+		return sum;
+	}
+
+	public void setSum(String sum)
+	{
+		this.sum = sum;
+	}
 
 	public Long getDid()
 	{

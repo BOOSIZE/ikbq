@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>部门列表</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+
+
+<button class="layui-btn layui-btn-radius layui-btn-danger" id="bt">新增</button>
+
+
+
+
+<table id="deptTable" lay-filter="deptTable"></table>
+
+
+
+
+<script>
+
+
+
+
+	layui.use('table', function() {
+
+
+		var table =layui.table;
+
+
+		table.render({
+
+			elem: '#deptTable'
+			,url: "/dept/getDeptList"//后端路径
+			,page: true//开启分页
+			,limit:5//每页条数
+			,limits:[5,10]//可选择每页条数
+			,id:"deptTable"//设置table的id（表格重载时调用）
+			,cols: [
+				[
+					{field:'name', title: '部门名称', width:'33%'},
+					{field:'sum', title: '当前人数', width:'33%'},
+					{toolbar:'#bar', title: '操作', width:'34%'}
+				]
+			]
+
+		});
+
+
+
+		table.on('tool(deptTable)', function(obj) {
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event;//被点击的按钮
+
+            if(layEvent==='delete')
+            {
+            	layer.confirm('确定要删除'+data.name+'吗',{title:"温馨提示",icon:7},function () {
+
+            		if(!(data.sum==='0'))
+                    {
+	                    layer.alert('该部门有员工暂时无法删除',{icon:5});
+                    }
+            		else
+                    {
+	                   $.ajax({
+                           type:'POST',
+                           url:'/dept/deleteDept',
+                           data:{name:data.name},
+                           success:function (msg)
+                           {
+                               if(msg==="no")
+                               {
+	                               layer.alert('删除失败，请重试',{icon:5});
+                               }
+                               else
+                               {
+	                               layer.alert('恭喜你，删除成功',{icon:6});
+	                               $(".layui-laypage-btn")[0].click();
+                               }
+                           },
+                           error:function ()
+                           {
+                               layer.alert('服务器正忙.....',{icon:5});
+                           }
+
+                       });
+                    }
+
+	            });
+
+            }
+		});
+
+
+
+
+		$('#bt').click(function () {
+
+
+			layer.prompt({title:"请输入部门名称"},function (value,index) {
+
+				if(value.trim().length<3 || value.trim().length>6)
+                {
+	                layer.alert('请输入3-6位的部门名称',{icon:5});
+                }
+				else
+                {
+	                $.ajax({
+		                type:'POST',
+		                url:'/dept/check',
+		                data:{name:value.trim()},
+		                success:function (msg)
+		                {
+			                if(msg==="no")
+			                {
+				                layer.alert('该部门已存在',{icon:5});
+			                }
+			                else
+			                {
+				                $.ajax({
+					                type:'POST',
+					                url:'/dept/addDept',
+					                data:{name:value},
+					                success:function (msg)
+					                {
+						                if(msg==="no")
+						                {
+							                layer.alert('新增失败，请重试',{icon:5});
+						                }
+						                else
+						                {
+							                layer.alert('恭喜你，新增成功',{icon:6});
+							                $(".layui-laypage-btn")[0].click();
+							                layer.close(index);
+						                }
+					                },
+					                error:function ()
+					                {
+						                layer.alert('服务器正忙.....',{icon:5});
+					                }
+
+				                });
+			                }
+		                },
+		                error:function ()
+		                {
+			                layer.alert('服务器正忙.....',{icon:5});
+		                }
+
+	                });
+                }
+			});
+		});
+
+
+	});
+
+</script>
+
+</body>
+</html>

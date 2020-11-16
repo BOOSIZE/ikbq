@@ -12,7 +12,7 @@
 
 
 
-<script type="text/html" id="tool">
+<script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="update">修改姓名</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
 </script>
@@ -83,7 +83,7 @@
 				{field:'sex', title: '性别', width:'20%',templet:function (d) {if(d.sex==='1'){return '男'} else{return '女'}}},
 				{field:'stu', title: '学历', width:'20%'},
 				{field:'date', title: '生日', width:'20%'},
-				{toolbar:'#tool', title: '操作', width:'20%'}
+				{toolbar:'#bar', title: '操作', width:'20%'}
 			]
 		]
 
