@@ -139,7 +139,7 @@
 						                else
 						                {
 							                layer.alert('恭喜你，新增成功',{icon:6});
-							                $(".layui-laypage-btn")[0].click();
+                                            table.reload("deptTable");
 							                layer.close(index);
 						                }
 					                },

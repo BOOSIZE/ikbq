@@ -204,9 +204,17 @@
 		var form = layui.form;
 		var laydate = layui.laydate;
 
+		//获取当前时间
+		var date = new Date();
+		var y = date.getFullYear();
+		var m = date.getMonth() + 1;
+		var d = date.getDate();
+		var now = "" + y + "-" + m + "-" + d;
+
 		laydate.render( {
 			elem:'#date',
-            showBottom:false
+            showBottom:false,
+            max:now
 		});
 
 		//监听提交
@@ -227,7 +235,7 @@
 	            $.ajax({
 		            type:'POST',
 		            url:'/user/addUser',//后端路径
-		            data:$('#myForm').serialize(),//传给后端的参数
+                    data:data.field,
 		            success:function(msg)//回调函数,访问成功时回执行的方法，msg:后端传回的信息
 		            {
 			            if(msg==="no")

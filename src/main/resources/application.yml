@@ -34,6 +34,13 @@ spring:
 #    view:
 #      suffix: .jsp
 #      prefix: /jsp/
+  #  上传文件大小
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      max-file-size: 100000000
+      max-request-size: 100000000
 
 mybatis:
        mapper-locations: classpath*:/mappers/*.xml

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>文件列表</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+    <script type="text/javascript" th:src="@{/js/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<script type="text/html" id="msg">
+    <form class="layui-form" action="" id="myForm">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">文件描述：</label>
+            <div class="layui-input-inline">
+                <input type="text"  id="title" name="title"  lay-verify="required"   placeholder="请输入15字以内的文件描述" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">价格：</label>
+            <div class="layui-input-inline">
+                <input type="text"  id="money" name="money" lay-verify="required"   placeholder="请输入1-100的整数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" type="button" id="select">选择文件</button>
+                <button type="button" class="layui-btn" lay-submit lay-filter="yes">确认上传</button><br><span id="sp">选择文件</span>
+            </div>
+        </div>
+
+
+
+
+    </form>
+</script>
+
+
+
+<button class="layui-btn layui-btn-radius layui-btn-danger" id="bt">上传文件</button>
+
+<table id="fileTable" lay-filter="fileTable"></table>
+
+
+
+<script>
+
+	layui.use(['upload','table','form'], function() {
+		var upload = layui.upload;
+		var table = layui.table;
+		var form = layui.form;
+
+
+
+		table.render({
+
+			elem: '#fileTable'
+			,url: "/file/getList"//后端路径
+			,page: true//开启分页
+			,limit:5//每页条数
+			,limits:[5,10]//可选择每页条数
+			,id:"fileTable"//设置table的id（表格重载时调用）
+			,cols: [
+				[
+					{field:'account', title: '上传者账号', width:'18%'},
+					{field:'name', title: '文件名', width:'18%'},
+					{field:'title', title: '文件描述', width:'18%'},
+					{field:'type', title: '文件类型', width:'18%'},
+					{field:'money', title: '价格', width:'18%'},
+					{toolbar:'#bar', title: '操作', width:'10%'}
+				]
+			]
+
+		});
+
+
+
+		table.on('tool(fileTable)', function(obj) {
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event;//被点击的按钮
+
+			if(layEvent==='delete')
+			{
+				layer.confirm('确定要删除吗',{title:"温馨提示",icon:7},function () {
+
+                    $.ajax({
+                        type:'POST',
+                        url:'/file/deleteFile',
+                        data:{id:data.id},
+                        success:function (msg)
+                        {
+                            if(msg==="no")
+                            {
+                                layer.alert('删除失败，请重试',{icon:5});
+                            }
+                            else
+                            {
+                                layer.alert('恭喜你，删除成功',{icon:6});
+                                $(".layui-laypage-btn")[0].click();
+                            }
+                        },
+                        error:function ()
+                        {
+                            layer.alert('服务器正忙.....',{icon:5});
+                        }
+
+                    });
+
+				});
+
+			}
+		});
+
+
+
+		$('#bt').click(function () {
+
+			var flag=false;
+			var dialog=layer.open({
+				title: '上传文件',
+				content: $('#msg').html(),
+				closeBtn: 2,
+				anim: 4,
+				type: 1,
+				area:['400px','250px'],
+				success:function () {
+
+				}
+			});
+			upload.render({
+				elem: '#select' //绑定元素
+				,auto:false
+				,accept: 'file'
+				,choose: function(obj){
+					flag=true;
+					obj.preview(function(index,file)
+					{
+						flag=true;
+						document.getElementById("sp").innerText=file.name;
+					});
+				}
+			});
+
+			form.on('submit(yes)', function(data)
+			{
+				var title=$('#title').val();
+				var money=$('#money').val();
+				var reg = new RegExp("^([1-9][0-9]{0,1}|100)$");
+
+
+				if(title.trim().length>=15)
+                {
+                	layer.alert("请输入15个字以内的文件描述",{icon:5});
+                }
+				else if(!reg.test(money))
+				{
+					layer.alert('请输入1-100的整数',{icon:5});
+				}
+				else if(!(flag===true))
+                {
+	                layer.alert('请选择您要上传的文件',{icon:5});
+                }
+				else
+                {
+                	var d=new FormData(document.getElementById("myForm"));
+	                $.ajax({
+		                type:'POST',
+		                url:'/file/addFile',
+		                data:d,
+		                contentType: false,
+		                processData: false,
+		                success:function (msg)
+		                {
+			                if(msg==="no")
+			                {
+				                layer.alert('上传失败，请重试',{icon:5});
+			                }
+			                else
+			                {
+                                layer.alert('恭喜你，上传成功',{icon:6});
+                                table.reload("fileTable");
+				                layer.close(dialog);
+			                }
+		                },
+		                error:function ()
+		                {
+			                layer.alert('服务器正忙.....',{icon:5});
+		                }
+
+	                });
+                }
+
+
+				return false;
+			});
+
+		});
+	});
+
+</script>
+
+</body>
+</html>

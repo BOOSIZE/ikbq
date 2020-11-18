@@ -279,7 +279,7 @@
 		form.on('submit(add)', function(data)
 		{
 			var dialog=layer.open({
-				title: '温馨提示',
+				title: '新增员工',
 				content: $('#msg').html(),
 				closeBtn: 2,
 				anim: 4,
@@ -356,8 +356,7 @@
 										else
 										{
 											layer.alert("恭喜你，新增成功",{icon:6});
-											$(".layui-laypage-btn")[0].click();
-											//table.reload('userTable');
+											table.reload('adminTable');
 											layer.close(dialog);
 										}
 									},

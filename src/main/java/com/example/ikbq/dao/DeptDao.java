@@ -17,7 +17,7 @@ public interface DeptDao
 
 
 	@Select("SELECT D.NAME ,COUNT(U.ACCOUNT) SUM FROM DEPTINFO D LEFT JOIN USERINFO U" +
-			" ON D.DID=U.DID AND U.ROLE!='1' GROUP BY D.NAME LIMIT #{limit} OFFSET #{start}")
+			" ON D.DID=U.DID AND U.ROLE!='1' GROUP BY D.NAME ORDER BY COUNT(U.ACCOUNT) DESC LIMIT #{limit} OFFSET #{start}")
 	List<Deptinfo> getDeptList(Integer limit,Integer start);
 
 	@Select("SELECT COUNT(*) FROM DEPTINFO")
